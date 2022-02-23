@@ -1,0 +1,45 @@
+class Solution {
+    public int[] deckRevealedIncreasing(int[] deck) {
+        int[] result = new int[deck.length];
+        int backHalf = 0;
+        int frontHalf = 0;
+        
+        if (deck.length % 2 == 0) {
+            backHalf = deck.length / 2;
+            frontHalf = deck.length / 2;
+        } else {
+            backHalf = deck.length / 2;
+            frontHalf = deck.length / 2 + 1;
+        }
+        
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>((a,b) -> b - a);
+        PriorityQueue<Integer> minHeap = new PriorityQueue<>((a,b) -> a - b);
+        
+        Arrays.sort(deck);
+        
+        for (int i = 0; i < frontHalf; i++) {
+            minHeap.offer(deck[i]);
+        }
+        
+        for (int i = deck.length - 1, j = backHalf; j > 0; i--, j--) {
+            maxHeap.offer(deck[i]);
+        }
+        
+        int i = 0;
+        int j = deck.length % 2 == 0 ? deck.length - 1 : deck.length - 2;
+        int count = 1;
+        while (i < deck.length) {
+            result[i] = minHeap.poll();
+            if (!maxHeap.isEmpty() && j >= 0 && count % 2 == 0) {
+                result[i-1] = maxHeap.poll();
+            } else if (!maxHeap.isEmpty() && j >= 0 && count % 2 != 0) {
+                result[j] = maxHeap.poll();
+                j = j - 2;
+            }
+            i = i + 2;
+            count++;
+        }
+        
+        return result;
+    }
+}
